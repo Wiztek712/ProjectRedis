@@ -6,4 +6,6 @@ const client = await createClient()
 
 await client.set('key', 'value');
 const value = await client.get('key');
+console.log(value);
+
 await client.disconnect();
