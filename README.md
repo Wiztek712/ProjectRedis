@@ -7,3 +7,4 @@ School project
 
 # Set up Node.js
 - https://nodejs.org/en/download/package-manager
+- npm install redis
