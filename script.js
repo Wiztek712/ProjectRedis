@@ -46,5 +46,4 @@ async function addCall(key, callHour, callPhoneNumber, callStatus, callDuration,
   } finally {await client.disconnect();}
 }
 
-addOperator('utilisateur:1001', "Griezmann", "Antoine");
-addCall('call:1001', '8h12', '0781881212', 'En cours', '75', 'utilisateur:1001', 'Appel pour une pizza')
+export {addCall, addOperator};
