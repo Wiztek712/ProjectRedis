@@ -21,7 +21,7 @@ async function addOperator(key, opLastName, opFirstName) {
   } finally {await client.disconnect();}
 }
 
-async function addCall(key, callHour, callPhoneNumber, callStatus, callDuration, callOperator, callDescription) {
+async function addCall(callHour, callPhoneNumber, callStatus, callDuration, callOperator, callDescription) {
 
   let client;
 
@@ -37,6 +37,9 @@ async function addCall(key, callHour, callPhoneNumber, callStatus, callDuration,
   try {
     client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
 
+    const callId = await client.incr('call_id');
+    const key = `call:${callId}`;
+
     await client.hSet(key, object);
     console.log('Object successfully stocked');
 
@@ -46,5 +49,4 @@ async function addCall(key, callHour, callPhoneNumber, callStatus, callDuration,
   } finally {await client.disconnect();}
 }
 
-addOperator('utilisateur:1001', "Griezmann", "Antoine");
-addCall('call:1001', '8h12', '0781881212', 'En cours', '75', 'utilisateur:1001', 'Appel pour une pizza')
+export {addCall, addOperator};
