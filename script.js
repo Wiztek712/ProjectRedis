@@ -42,38 +42,32 @@ async function doesThisOperatorExist(key) {
 }
 
 // Function to add a new call to the call center
-async function addCall(callHour, callPhoneNumber, callOperator, callDescription, callDuration = '0',callStatus = "Non asssigné") {
+async function addCall(callHour, callPhoneNumber, callDescription, callDuration = '0',callStatus = "Non asssigne") {
 
   let client;
 
-  if(await doesThisOperatorExist(callOperator)){
-    const object = {
-      Time: callHour,
-      Phone_Number: callPhoneNumber,
-      Status : callStatus,
-      Duration_In_Seconds : callDuration,
-      Operator : callOperator,
-      Description : callDescription
-    };
-    
-    try {
-      client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
+  const object = {
+    Time: callHour,
+    Phone_Number: callPhoneNumber,
+    Status : callStatus,
+    Duration_In_Seconds : callDuration,
+    Operator : "",
+    Description : callDescription
+  };
   
-      const callId = await client.incr('call_id');
-      const key = `call:${callId}`;
-  
-      await client.hSet(key, object);
-      console.log('Object successfully stocked');
-  
-    } catch (err) {
-        console.error('Error during insertion:', err);
-  
-    } finally {await client.disconnect();}
+  try {
+    client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
 
-  } else {
+    const callId = await client.incr('call_id');
+    const key = `call:${callId}`;
 
-    console.log('This operator does not exist.')
-  }
+    await client.hSet(key, object);
+    console.log('Object successfully stocked');
+
+  } catch (err) {
+      console.error('Error during insertion:', err);
+
+  } finally {await client.disconnect();}
 }
 
 // Function to create random call duration
@@ -84,7 +78,7 @@ function randomDuration(offset) {
 }
 
 // Function to change the state of a call
-async function changeCallState(callId_, Status_ = "Terminé"){
+async function changeCallState(callId_, Status_ = "Termine"){
   
   let client;
 
@@ -120,4 +114,34 @@ async function changeCallState(callId_, Status_ = "Terminé"){
   } finally {await client.disconnect();}
 }
 
-export {addCall, addOperator, changeCallState};
+async function changeCallOperator(callId_, operator_){
+  
+  if(await doesThisOperatorExist(operator_) || operator_==""){
+    let client;
+
+    try {
+      client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
+
+      if (Object.keys(callId_).length === 0) {
+          console.log(`Call with ID ${callId_} does not exist.`);
+          return;
+      }
+
+      // Update the status and duration back in Redis
+      await client.hSet(callId_, "Operator", operator_);
+
+
+    } catch (err) {
+        console.error('Error during insertion:', err);
+
+    } finally {
+      await client.disconnect();
+    }
+
+  } else {
+    console.log('This operator does not exist.');
+  }
+  return;
+}
+
+export {addCall, addOperator, changeCallState, changeCallOperator};

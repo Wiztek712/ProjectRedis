@@ -1,4 +1,4 @@
-import { addCall, addOperator, changeCallState, doesThisOperatorExist } from "./script.js";
+import { addCall, addOperator, changeCallState, changeCallOperator } from "./script.js";
 
 addOperator('Operator:44', 'Hamilton', 'Lewis')
 addOperator('Operator:63', 'Russell', 'George')
@@ -31,8 +31,17 @@ addOperator('Operator:27', 'Hulkenberg', 'Nico')
 addOperator('Operator:20', 'Magnussen', 'Kevin')*/
 
 
-addCall('8h12', '0781881212', 'utilisateur:44', 'Pole position');
+addCall('8h12', '0781881212', 'Pole position');
 
 // Calls can be turned into the following states: "Non pris en compte", "En cours" or "Terminé"
 changeCallState('call:2');
 changeCallState('call:20');
+
+// Changing many times to test
+changeCallOperator("call:1", "Operator:63");
+changeCallOperator("call:1", "Operator:45");
+changeCallOperator("call:1", "");
+changeCallOperator("call:1", "Operator:45");
+changeCallOperator("call:1", "Operator:44");
+changeCallOperator("call:1", "Operator:63");
+
