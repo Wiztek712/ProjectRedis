@@ -36,5 +36,4 @@ await changeCallState("call:20");
 let list = await listInProgressCalls();
 console.log("Display the list of ongoing calls");
 displayListInProgressCalls(list);
-console.log("Display the list of ongoing calls for operator 44");
 await listInProgressCallsByOperator("Operator:44");

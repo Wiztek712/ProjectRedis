@@ -205,9 +205,9 @@ async function listInProgressCallsByOperator(Operator_){
   try {
     client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
     // Looking for calls that involve the operator
+    let oneTimeDisplayOperator = 0; // In order to know if the operator has calls and for displaying its name one time only.
     for (let i = 0; i < listCalls.length; i++) {
       let element = listCalls[i]
-      let oneTimeDisplayOperator = 0; // In order to know if the operator has calls and for displaying its name one time only.
       if(element.Operator === Operator_){
         oneTimeDisplayOperator++; 
         if (oneTimeDisplayOperator === 1){ // For diplaying its name only at beginning of all its calls.
