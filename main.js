@@ -1,4 +1,4 @@
-import { addCall, addOperator, changeCallState, listInProgressCalls, changeCallOperator } from "./script.js";
+import { addCall, addOperator, changeCallState, listInProgressCalls, changeCallOperator, listInProgressCallsByOperator, displayListInProgressCalls } from "./script.js";
 
 addOperator('Operator:44', 'Hamilton', 'Lewis')
 addOperator('Operator:63', 'Russell', 'George')
@@ -37,4 +37,5 @@ addCall('8h12', '0781881212', 'Operator:44', 'Pole position');
 // Calls can be turned into the following states: "Non pris en compte", "En cours" or "Terminé"
 // changeCallState('call:2');
 // changeCallState('call:20');
-listInProgressCalls();
+// listInProgressCalls();
+listInProgressCallsByOperator("Operator:44");
