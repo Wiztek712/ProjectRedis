@@ -150,6 +150,7 @@ async function listInProgressCalls(){
   
   let client;
   let InProgressCalls = [];
+
   try {
     client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
 
@@ -158,16 +159,48 @@ async function listInProgressCalls(){
       let call_id = "call:" + key;
       const callData = await client.hGetAll(call_id);
       if(callData.Status === "En cours"){
-        console.log("call id : ", call_id);
-        console.log("Description : ", callData.Description);
-        console.log("Operator in charge : ", callData.Operator);
         InProgressCalls.push(callData);
       } 
+    }
+
+    return InProgressCalls;
+  } catch (err) {
+      console.error('Error during insertion:', err);
+  } finally { await client.disconnect(); }
+}
+
+function displayListInProgressCalls(list){
+  list.forEach(element => {
+    console.log("Operator in charge :", element.Operator);
+    console.log("Since", element.Duration_In_Seconds, "seconds");
+    console.log("Description :", element.Description);
+  }); 
+}
+
+// function to retrieve every in progress calls for a peticular operator
+async function listInProgressCallsByOperator(Operator_){
+
+  let listCalls = await listInProgressCalls();
+  let client;
+
+  try {
+    client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
+    for (let i = 0; i < listCalls.length; i++) {
+      let element = listCalls[i]
+      let bool = false;
+      if(element.Operator === Operator_){
+        bool = true;
+        console.log("In communication since", element.Duration_In_Seconds, "seconds");
+        console.log("Description :", element.Description);
+      }
+      if (bool){
+        console.log("For Operator", Operator_);
+      }
     }
   } catch (err) {
       console.error('Error during insertion:', err);
   } finally { await client.disconnect(); }
 }
 
-export {addCall, addOperator, changeCallState, listInProgressCalls, changeCallOperator};
+export {addCall, addOperator, changeCallState, listInProgressCalls, changeCallOperator, listInProgressCallsByOperator, displayListInProgressCalls};
 
