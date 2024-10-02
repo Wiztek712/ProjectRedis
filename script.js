@@ -5,39 +5,42 @@ async function addOperator(key, opLastName, opFirstName) {
 
   let client;
 
+  // Operator's fields
   const object = {
     Last_Name: opLastName,
     First_Name: opFirstName
   };
 
   try {
+    // Connection to database
     client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
 
-    await client.hSet(key, object);
+    await client.hSet(key, object); // Filling database with the Operator and it's key
     console.log('Object successfully stocked');
 
   } catch (err) {
       console.error('Error during insertion:', err);
 
-  } finally {await client.disconnect();}
+  } finally {await client.disconnect();} // Deconnection from database
 }
 
-// Function to check if the operator already exists (used in addCall)
+// Function to check if the operator exists (used in addCall in order to assign a valid operator to a call)
 async function doesThisOperatorExist(key) {
 
   let client;
 
   try {
-      client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
+    // Connection to database
+    client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
 
-      const exists = await client.exists(key);
-      await client.disconnect();
-      return exists === 1;
+    const exists = await client.exists(key);
+    await client.disconnect(); // Deconnection from database
+    return exists === 1; // Return True if the operator exists and False if it doesn't exist
 
   } catch (err) {
-      console.error('Error during verification', err);
-      await client.disconnect();
-      return false;
+    console.error('Error during verification', err);
+    await client.disconnect(); // Deconnection from database
+    return false;
   }
 }
 
@@ -46,6 +49,7 @@ async function addCall(callHour, callPhoneNumber, callDescription, callDuration 
 
   let client;
 
+  // Call's fields
   const object = {
     Time: callHour,
     Phone_Number: callPhoneNumber,
@@ -56,18 +60,20 @@ async function addCall(callHour, callPhoneNumber, callDescription, callDuration 
   };
   
   try {
+    // Connection to database
     client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
 
+    // CallId incrementation
     const callId = await client.incr('call_id');
     const key = `call:${callId}`;
 
-    await client.hSet(key, object);
+    await client.hSet(key, object); // Filling database with the Operator and it's key
     console.log('Object successfully stocked');
 
   } catch (err) {
       console.error('Error during insertion:', err);
 
-  } finally {await client.disconnect();}
+  } finally {await client.disconnect();} // Deconnection from database
 }
 
 // Function to create random call duration
@@ -83,16 +89,20 @@ async function changeCallState(callId_, Status_ = "Termine"){
   let client;
 
   try {
+    // Connection to database
     client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
     
+    // Getting the status and the duration
     const callStatus = await client.hGet(callId_, "Status");
     const callDuration = await client.hGet(callId_, "Duration_In_Seconds");
 
+    // Checking if the callId exists
     if (Object.keys(callId_).length === 0) {
         console.log(`Call with ID ${callId_} does not exist.`);
         return;
     }
 
+    // Checking if fields are valid
     if (!callStatus || !callDuration) {
       console.log(`Call with ID ${callId_} does not exist or has incomplete data.`);
       return;
@@ -111,18 +121,21 @@ async function changeCallState(callId_, Status_ = "Termine"){
   } catch (err) {
       console.error('Error during insertion:', err);
 
-  } finally {await client.disconnect();}
+  } finally {await client.disconnect();} // Deconnection from database
 }
 
-
+// Function to change the Operator of a call
 async function changeCallOperator(callId_, operator_){
   
+  // We check if the Operator exists (or if we want to remove the Operator)
   if(await doesThisOperatorExist(operator_) || operator_==""){
     let client;
 
     try {
+      // Connection to database
       client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
 
+      // Checking if the callId exists
       if (Object.keys(callId_).length === 0) {
           console.log(`Call with ID ${callId_} does not exist.`);
           return;
@@ -136,7 +149,7 @@ async function changeCallOperator(callId_, operator_){
         console.error('Error during insertion:', err);
 
     } finally {
-      await client.disconnect();
+      await client.disconnect(); // Deconnection from database
     }
 
   } else {
