@@ -145,8 +145,6 @@ async function changeCallOperator(callId_, operator_){
   return;
 }
 
-export {addCall, addOperator, changeCallState, changeCallOperator};
-
 // Function to retrieve in progress calls
 async function listInProgressCalls(){
   
@@ -171,5 +169,5 @@ async function listInProgressCalls(){
   } finally { await client.disconnect(); }
 }
 
-export {addCall, addOperator, changeCallState, listInProgressCalls};
+export {addCall, addOperator, changeCallState, listInProgressCalls, changeCallOperator};
 
