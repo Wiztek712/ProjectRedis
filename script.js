@@ -45,7 +45,7 @@ async function doesThisOperatorExist(key) {
 }
 
 // Function to add a new call to the call center
-async function addCall(callHour, callPhoneNumber, callDescription, callDuration = '0',callStatus = "Non asssigne") {
+async function addCall(callHour, callPhoneNumber, callDescription, callDuration = '0',callStatus = "Non asssigne", callOperator = "") {
 
   let client;
 
@@ -55,7 +55,7 @@ async function addCall(callHour, callPhoneNumber, callDescription, callDuration 
     Phone_Number: callPhoneNumber,
     Status : callStatus,
     Duration_In_Seconds : callDuration,
-    Operator : "",
+    Operator : callOperator,
     Description : callDescription
   };
   
@@ -84,6 +84,7 @@ function randomDuration(offset) {
 }
 
 // Function to change the state of a call
+// Calls can be turned into the following states: "Non pris en compte", "En cours" or "Termine"
 async function changeCallState(callId_, Status_ = "Termine"){
   
   let client;
@@ -186,11 +187,12 @@ async function listInProgressCalls(){
 
 // Function to display the calls that are in progress with some info
 function displayListInProgressCalls(list){
-  list.forEach(element => {
+  for (let i = 0; i < list.length; i++) {
+    let element = list[i]
     console.log("Operator in charge :", element.Operator);
     console.log("Since", element.Duration_In_Seconds, "seconds");
     console.log("Description :", element.Description);
-  }); 
+  }; 
 }
 
 // Function to retrieve every in progress calls for a peticular operator
