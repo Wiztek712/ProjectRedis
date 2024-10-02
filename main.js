@@ -1,4 +1,4 @@
 import { addCall, addOperator } from "./script.js";
 
-addOperator('utilisateur:1001', "Griezmann", "Antoine");
-addCall('call:1001', '8h12', '0781881212', 'En cours', '75', 'utilisateur:1001', 'Appel pour une pizza')
+addOperator('Operator:33', "Griezmann", "Antoine");
+addCall('8h12', '0781881212', 'Terminé', '75', 'Operator:33', 'Max Box Box')
