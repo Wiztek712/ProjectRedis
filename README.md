@@ -11,3 +11,6 @@ School project
 
 # Some Node.js-Redis docs
 - https://www.npmjs.com/package/redis
+
+# Tutorial
+You can just run the main.js file to initialise everything, and then you can comment the initialisation part and use the different functions to test our solution.
