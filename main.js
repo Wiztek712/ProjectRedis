@@ -1,4 +1,4 @@
-import { addCall, addOperator, changeCallState } from "./script.js";
+import { addCall, addOperator, changeCallState, doesThisOperatorExist } from "./script.js";
 
 addOperator('Operator:44', 'Hamilton', 'Lewis')
 addOperator('Operator:63', 'Russell', 'George')
