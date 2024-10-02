@@ -120,4 +120,28 @@ async function changeCallState(callId_, Status_ = "Terminé"){
   } finally {await client.disconnect();}
 }
 
-export {addCall, addOperator, changeCallState};
+// Function to retrieve in progress calls
+async function listInProgressCalls(){
+  
+  let client;
+  let InProgressCalls = [];
+  try {
+    client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
+
+    const keys = await client.keys('call:*');
+    for (let key in keys) {
+      let call_id = "call:" + key;
+      const callData = await client.hGetAll(call_id);
+      if(callData.Status === "En cours"){
+        console.log("call id : ", call_id);
+        console.log("Description : ", callData.Description);
+        console.log("Operator in charge : ", callData.Operator);
+        InProgressCalls.push(callData);
+      } 
+    }
+  } catch (err) {
+      console.error('Error during insertion:', err);
+  } finally { await client.disconnect(); }
+}
+
+export {addCall, addOperator, changeCallState, listInProgressCalls};
