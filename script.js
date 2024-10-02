@@ -162,26 +162,29 @@ async function changeCallOperator(callId_, operator_){
 async function listInProgressCalls(){
   
   let client;
-  let InProgressCalls = [];
+  let InProgressCalls = []; // At the end we return a list of the calls
 
   try {
     client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
 
+    // List all the calls from their id
     const keys = await client.keys('call:*');
     for (let key in keys) {
-      let call_id = "call:" + key;
+      let call_id = "call:" + key; // key only has the number, we have to add "call:" to it
       const callData = await client.hGetAll(call_id);
       if(callData.Status === "En cours"){
+        // only retrieve call that are marked 'En cours"
         InProgressCalls.push(callData);
       } 
     }
-
+    // return the list
     return InProgressCalls;
   } catch (err) {
       console.error('Error during insertion:', err);
   } finally { await client.disconnect(); }
 }
 
+// Function to display the calls that are in progress with some info
 function displayListInProgressCalls(list){
   list.forEach(element => {
     console.log("Operator in charge :", element.Operator);
@@ -190,25 +193,30 @@ function displayListInProgressCalls(list){
   }); 
 }
 
-// function to retrieve every in progress calls for a peticular operator
+// Function to retrieve every in progress calls for a peticular operator
 async function listInProgressCallsByOperator(Operator_){
 
+  // Retrieve the list if in progress calls
   let listCalls = await listInProgressCalls();
   let client;
 
   try {
     client = await createClient().on('error', err => console.log('Redis Client Error', err)).connect();
+    // Looking for calls that involve the operator
     for (let i = 0; i < listCalls.length; i++) {
       let element = listCalls[i]
-      let bool = false;
+      let oneTimeDisplayOperator = 0; // In order to know if the operator has calls and for displaying its name one time only.
       if(element.Operator === Operator_){
-        bool = true;
+        oneTimeDisplayOperator++; 
+        if (oneTimeDisplayOperator === 1){ // For diplaying its name only at beginning of all its calls.
+          console.log("List of ongoing calls for Operator", Operator_);
+        }
         console.log("In communication since", element.Duration_In_Seconds, "seconds");
         console.log("Description :", element.Description);
       }
-      if (bool){
-        console.log("For Operator", Operator_);
-      }
+    }
+    if(oneTimeDisplayOperator === 0){ // Inform the user if the operator has no calls
+      console.log(Operator_, "has no calls ongoing");
     }
   } catch (err) {
       console.error('Error during insertion:', err);
@@ -216,4 +224,3 @@ async function listInProgressCallsByOperator(Operator_){
 }
 
 export {addCall, addOperator, changeCallState, listInProgressCalls, changeCallOperator, listInProgressCallsByOperator, displayListInProgressCalls};
-
