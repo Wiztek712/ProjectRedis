@@ -31,7 +31,8 @@ addOperator('Operator:27', 'Hulkenberg', 'Nico')
 addOperator('Operator:20', 'Magnussen', 'Kevin')*/
 
 
-addCall('8h12', '0781881212', 'utilisateur:44', 'Pole position');
+addCall('8h12', '0781881212', 'Operator:44', 'Pole position');
+
 
 // Calls can be turned into the following states: "Non pris en compte", "En cours" or "Terminé"
 // changeCallState('call:2');
